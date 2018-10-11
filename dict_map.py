@@ -17,8 +17,9 @@ if __name__ == "__main__":
     mapped = open('mapped_words.txt','w')
     
     for line in dictionary:
-        key = getKey(line.strip())
-        mapped.write(str(key) + " " + line.strip() + "\n")
+        if len(line.strip()) >= 3:
+            key = getKey(line.strip())
+            mapped.write(str(key) + " " + line.strip() + "\n")
 
     dictionary.close()
     mapped.close()
