@@ -20,12 +20,25 @@ def initHash():
             hashmap[int(key)].append( value )
     mapped_words.close()
 
+# Returns a trimmed word list of words within specified length values
+def trimHelper(word_list, minLength = -1, maxLength = -1):
+    trimmed_list = []
+    for word in word_list:
+        if (minLength == -1 or len(word) >= minLength) and (maxLength == -1 or len(word) <= maxLength):
+            trimmed_list.append(word)
+    return trimmed_list
+
 # Returns a trimmed version of hashmap that only contains the words that exist within string_key
-def trimMap(string_key):
+def trimMap(string_key, minLength = -1, maxLength = -1):
     newMap = {}
-    for key, value in hashmap.items():
-        if (string_key % key == 0):
-            newMap[key] = value
+    if minLength == -1 and maxLength == -1:
+        for key, value in hashmap.items():
+            if (string_key % key == 0):
+                newMap[key] = value
+    else:
+        for key, value in hashmap.items():
+            if (string_key % key == 0): 
+                newMap[key] = trimHelper(value, minLength, maxLength)
     return newMap
 
 # Checks if string_key contains all of the required words and returns the modified key if it does, -1 if not
@@ -78,7 +91,8 @@ if __name__ == "__main__":
         reqWords = []
         minLength = -1
         maxLength = -1
-
+        
+        # Get string input from user or prompt to exit
         word = raw_input("Enter string/letters to check or 1 to exit: ")       
         if word == '1':
             break
@@ -97,13 +111,16 @@ if __name__ == "__main__":
         # Ask user if they want word length constraints
         f_length = raw_input("Limit answer words to specific lengths? (y or n): ")
         if f_length == 'y':
-            minLength = int(raw_input("Minimum length: "))
-            maxLength = int(raw_input("Maximum length: "))
+            minLength = int(raw_input("Minimum length (-1 if none): "))
+            maxLength = int(raw_input("Maximum length (-1 if none): "))
         
         # Get key value, trim dictionary accordingly, and create list of solutions
-        trimmed_map = trimMap(keyvalue)
+        trimmed_map = trimMap(keyvalue, minLength, maxLength)
         solutions = solveAnagram(trimmed_map, keyvalue, reqWords)
         
         # Print out solutions
-        for s in solutions:
-            print s
+        if solutions:
+            for s in solutions:
+                print s
+        else:
+            print "No solutions"
